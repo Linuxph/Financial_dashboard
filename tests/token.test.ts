@@ -1,8 +1,9 @@
 import { signToken, verifyToken } from '../utils/token';
 import { appConfig } from '../config/app';
+import { UserRole } from '../models/User';
 
 describe('Token Utils', () => {
-  const testPayload = { userId: '507f1f77bcf86cd799439011', role: 'admin' };
+  const testPayload: { userId: string; role: UserRole } = { userId: '507f1f77bcf86cd799439011', role: 'admin' };
 
   describe('signToken', () => {
     it('should sign a valid token', () => {

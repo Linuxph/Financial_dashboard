@@ -48,10 +48,19 @@ const sanitizeValue = (value: unknown): unknown => {
   return value;
 };
 
+const sanitizeObjectInPlace = (target: unknown) => {
+  if (!target || typeof target !== 'object' || Array.isArray(target)) {
+    return;
+  }
+
+  const sanitizedEntries = Object.entries(target).map(([key, value]) => [key, sanitizeValue(value)]);
+  Object.assign(target, Object.fromEntries(sanitizedEntries));
+};
+
 const xssSanitizer: express.RequestHandler = (req, _res, next) => {
   req.body = sanitizeValue(req.body);
-  req.query = sanitizeValue(req.query) as express.Request['query'];
-  req.params = sanitizeValue(req.params) as express.Request['params'];
+  sanitizeObjectInPlace(req.query);
+  sanitizeObjectInPlace(req.params);
   next();
 };
 
@@ -88,3 +97,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+

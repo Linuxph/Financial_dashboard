@@ -43,10 +43,17 @@ const sanitizeValue = (value) => {
     }
     return value;
 };
+const sanitizeObjectInPlace = (target) => {
+    if (!target || typeof target !== 'object' || Array.isArray(target)) {
+        return;
+    }
+    const sanitizedEntries = Object.entries(target).map(([key, value]) => [key, sanitizeValue(value)]);
+    Object.assign(target, Object.fromEntries(sanitizedEntries));
+};
 const xssSanitizer = (req, _res, next) => {
     req.body = sanitizeValue(req.body);
-    req.query = sanitizeValue(req.query);
-    req.params = sanitizeValue(req.params);
+    sanitizeObjectInPlace(req.query);
+    sanitizeObjectInPlace(req.params);
     next();
 };
 app.use((0, helmet_1.default)());
